@@ -2,7 +2,7 @@ const articlesRouter = require('express').Router()
 const Article = require('../models/Article')
 
 // All articles
-articlesRouter.get('/', async (res, next) => {
+articlesRouter.get('/', async (req, res, next) => {
   try {
     const articles = await Article.find({})
     res.json(articles)

@@ -11,6 +11,7 @@ const app = express()
 
 // Routers
 const articlesRouter = require('./controllers/articles')
+const usersRouter = require('./controllers/users')
 
 // Middlewares
 const unknownEndpoint = require('./middlewares/unknownEndpoint')
@@ -21,6 +22,7 @@ app.use(express.json())
 
 // Routes
 app.use('/api/articles', articlesRouter)
+app.use('/api/users', usersRouter)
 
 app.use(unknownEndpoint)
 app.use(handleErrors)
