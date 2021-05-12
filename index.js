@@ -14,24 +14,20 @@ const articlesRouter = require('./controllers/articles')
 
 // Middlewares
 const unknownEndpoint = require('./middlewares/unknownEndpoint')
+const handleErrors = require('./middlewares/handleErrors')
 
 app.use(cors())
 app.use(express.json())
 
 // Routes
-app.get('/', (req, res) => {
-  res.send({
-    name: 'doyo91',
-    message: 'Hello world'
-  })
-})
 app.use('/api/articles', articlesRouter)
+
+app.use(unknownEndpoint)
+app.use(handleErrors)
 
 const PORT = process.env.PORT
 const server = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`)
 })
-
-app.use(unknownEndpoint)
 
 module.exports = { app, server }

@@ -2,14 +2,17 @@ const articlesRouter = require('express').Router()
 const Article = require('../models/Article')
 
 // All articles
-articlesRouter.get('/', async (req, res) => {
-  const articles = await Article.find({})
-
-  res.json(articles)
+articlesRouter.get('/', async (res, next) => {
+  try {
+    const articles = await Article.find({})
+    res.json(articles)
+  } catch (error) {
+    next(error)
+  }
 })
 
 // Article by id
-articlesRouter.get('/:id', async (req, res) => {
+articlesRouter.get('/:id', async (req, res, next) => {
   const { id } = req.params
 
   try {
@@ -18,13 +21,14 @@ articlesRouter.get('/:id', async (req, res) => {
 
     res.status(404).end()
   } catch (error) {
-    console.log(error)
+    next(error)
   }
 })
 
 // Create article
-articlesRouter.post('/', async (req, res) => {
+articlesRouter.post('/', async (req, res, next) => {
   const body = req.body
+  if (!body) return res.status(400).json({ error: 'required data' })
   const { title, description, price, stock, imageURL } = body
   const newArticle = new Article({
     title,
@@ -38,12 +42,12 @@ articlesRouter.post('/', async (req, res) => {
     const savedArticle = await newArticle.save()
     res.status(201).json(savedArticle)
   } catch (error) {
-    console.log(error)
+    next(error)
   }
 })
 
 // Update article
-articlesRouter.put('/:id', async (req, res) => {
+articlesRouter.put('/:id', async (req, res, next) => {
   const { id } = req.params
   const { title, description, price, stock, imageURL } = req.body
 
@@ -61,18 +65,18 @@ articlesRouter.put('/:id', async (req, res) => {
     })
     res.json(updatedArticle)
   } catch (error) {
-    console.log(error)
+    next(error)
   }
 })
 
 // Delete article
-articlesRouter.delete('/:id', async (req, res) => {
+articlesRouter.delete('/:id', async (req, res, next) => {
   const { id } = req.params
   try {
     await Article.findByIdAndRemove(id)
     res.status(204).end()
   } catch (error) {
-    console.log(error)
+    next(error)
   }
 })
 
