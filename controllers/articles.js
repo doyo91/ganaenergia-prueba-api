@@ -2,7 +2,9 @@ const articlesRouter = require('express').Router()
 const Article = require('../models/Article')
 const tokenExtractor = require('../middlewares/TokenExtractor')
 
-// All articles
+// @desc      Get all articles
+// @route     GET /api/articles
+// @access    Public
 articlesRouter.get('/', async (req, res, next) => {
   try {
     const articles = await Article.find({})
@@ -12,7 +14,9 @@ articlesRouter.get('/', async (req, res, next) => {
   }
 })
 
-// Article by id
+// @desc      Get article by id
+// @route     GET /api/articles/:id
+// @access    Public
 articlesRouter.get('/:id', async (req, res, next) => {
   const { id } = req.params
 
@@ -26,7 +30,9 @@ articlesRouter.get('/:id', async (req, res, next) => {
   }
 })
 
-// Create article
+// @desc      Create article
+// @route     POST /api/articles
+// @access    Private
 articlesRouter.post('/', [tokenExtractor], async (req, res, next) => {
   const body = req.body
   if (!body) return res.status(400).json({ error: 'required data' })
@@ -47,7 +53,9 @@ articlesRouter.post('/', [tokenExtractor], async (req, res, next) => {
   }
 })
 
-// Update article
+// @desc      Update article
+// @route     PUT /api/articles/:id
+// @access    Private
 articlesRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
   const { title, description, price, stock, imageURL } = req.body
@@ -70,7 +78,9 @@ articlesRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
   }
 })
 
-// Delete article
+// @desc      Delete article
+// @route     DELETE /api/articles
+// @access    Private
 articlesRouter.delete('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
   try {
