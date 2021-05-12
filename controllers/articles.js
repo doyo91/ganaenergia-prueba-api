@@ -1,5 +1,6 @@
 const articlesRouter = require('express').Router()
 const Article = require('../models/Article')
+const tokenExtractor = require('../middlewares/TokenExtractor')
 
 // All articles
 articlesRouter.get('/', async (req, res, next) => {
@@ -26,7 +27,7 @@ articlesRouter.get('/:id', async (req, res, next) => {
 })
 
 // Create article
-articlesRouter.post('/', async (req, res, next) => {
+articlesRouter.post('/', [tokenExtractor], async (req, res, next) => {
   const body = req.body
   if (!body) return res.status(400).json({ error: 'required data' })
   const { title, description, price, stock, imageURL } = body
@@ -47,7 +48,7 @@ articlesRouter.post('/', async (req, res, next) => {
 })
 
 // Update article
-articlesRouter.put('/:id', async (req, res, next) => {
+articlesRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
   const { title, description, price, stock, imageURL } = req.body
 
@@ -70,7 +71,7 @@ articlesRouter.put('/:id', async (req, res, next) => {
 })
 
 // Delete article
-articlesRouter.delete('/:id', async (req, res, next) => {
+articlesRouter.delete('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
   try {
     await Article.findByIdAndRemove(id)

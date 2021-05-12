@@ -10,6 +10,7 @@ const logger = require('./utils/logger')
 const app = express()
 
 // Routers
+const loginRouter = require('./controllers/login')
 const articlesRouter = require('./controllers/articles')
 const usersRouter = require('./controllers/users')
 
@@ -17,10 +18,13 @@ const usersRouter = require('./controllers/users')
 const unknownEndpoint = require('./middlewares/unknownEndpoint')
 const handleErrors = require('./middlewares/handleErrors')
 
+// Enable CORS
 app.use(cors())
+// Body parser
 app.use(express.json())
 
 // Routes
+app.use('/api/login', loginRouter)
 app.use('/api/articles', articlesRouter)
 app.use('/api/users', usersRouter)
 
