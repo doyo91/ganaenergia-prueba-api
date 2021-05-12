@@ -5,9 +5,15 @@ const uniqueValidator = require('mongoose-unique-validator')
 const userSchema = new Schema({
   username: {
     type: String,
-    unique: true
+    unique: true,
+    required: true
   },
-  passwordHash: String
+  name: {
+    type: String,
+    required: false,
+    default: ''
+  },
+  passwordHash: { type: String, required: true }
 })
 
 userSchema.plugin(uniqueValidator)

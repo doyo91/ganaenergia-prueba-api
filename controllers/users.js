@@ -1,8 +1,11 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/User')
+const tokenExtractor = require('../middlewares/TokenExtractor')
 
-// All users
+// @desc      Get all users
+// @route     GET /api/users
+// @access    Private
 usersRouter.get('/', async (req, res, next) => {
   try {
     const users = await User.find({})
@@ -12,8 +15,10 @@ usersRouter.get('/', async (req, res, next) => {
   }
 })
 
-// User by id
-usersRouter.get('/:id', async (req, res, next) => {
+// @desc      Get single user
+// @route     GET /api/users/:id
+// @access    Private
+usersRouter.get('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
 
   try {
@@ -26,15 +31,18 @@ usersRouter.get('/:id', async (req, res, next) => {
   }
 })
 
-// Create user
+// @desc      Register user
+// @route     POST /api/users
+// @access    Public
 usersRouter.post('/', async (req, res, next) => {
-  const { username, password } = req.body
+  const { username, name, password } = req.body
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
 
   const newUser = new User({
     username,
+    name,
     passwordHash
   })
 
@@ -47,30 +55,25 @@ usersRouter.post('/', async (req, res, next) => {
 })
 
 // Update article
-// usersRouter.put('/:id', async (req, res, next) => {
-//   const { id } = req.params
-//   const { title, description, price, stock, imageURL } = req.body
+usersRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
+  const { id } = req.params
+  const { username, name } = req.body
 
-//   const newArticleInfo = {
-//     title,
-//     description,
-//     price,
-//     stock,
-//     imageURL
-//   }
+  // TODO: username is not exists
+  try {
+    const user = await User.findByIdAndUpdate(id, { username, name }, {
+      new: true
+    })
+    res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+})
 
-//   try {
-//     const updatedArticle = await Article.findByIdAndUpdate(id, newArticleInfo, {
-//       new: true
-//     })
-//     res.json(updatedArticle)
-//   } catch (error) {
-//     next(error)
-//   }
-// })
-
-// Delete user
-usersRouter.delete('/:id', async (req, res, next) => {
+// @desc      Delete user
+// @route     DELETE /api/users/:id
+// @access    Private/Admin
+usersRouter.delete('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
   try {
     await User.findByIdAndRemove(id)
