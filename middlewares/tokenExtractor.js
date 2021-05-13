@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken')
 
 const tokenExtractor = (req, res, next) => {
   const authorization = req.get('authorization')
-  console.log('auth -->', authorization)
   let token = ''
 
   if (authorization && authorization.toLowerCase().startsWith('bearer')) {
