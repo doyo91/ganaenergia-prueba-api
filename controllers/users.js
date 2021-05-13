@@ -5,7 +5,7 @@ const tokenExtractor = require('../middlewares/TokenExtractor')
 
 // @desc      Get all users
 // @route     GET /api/users
-// @access    Private
+// @access    Public
 usersRouter.get('/', async (req, res, next) => {
   try {
     const users = await User.find({})
@@ -17,8 +17,8 @@ usersRouter.get('/', async (req, res, next) => {
 
 // @desc      Get single user
 // @route     GET /api/users/:id
-// @access    Private
-usersRouter.get('/:id', [tokenExtractor], async (req, res, next) => {
+// @access    Public
+usersRouter.get('/:id', async (req, res, next) => {
   const { id } = req.params
 
   try {
@@ -42,7 +42,7 @@ usersRouter.post('/', async (req, res, next) => {
 
   const newUser = new User({
     username,
-    name,
+    name: name || '',
     passwordHash
   })
 
@@ -54,14 +54,15 @@ usersRouter.post('/', async (req, res, next) => {
   }
 })
 
-// Update article
+// @desc      Upadate name user
+// @route     PUT /api/users/:id
+// @access    Private
 usersRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
-  const { username, name } = req.body
+  const { name } = req.body
 
-  // TODO: username is not exists
   try {
-    const user = await User.findByIdAndUpdate(id, { username, name }, {
+    const user = await User.findByIdAndUpdate(id, { name }, {
       new: true
     })
     res.status(200).json(user)
@@ -72,7 +73,7 @@ usersRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
 
 // @desc      Delete user
 // @route     DELETE /api/users/:id
-// @access    Private/Admin
+// @access    Private
 usersRouter.delete('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
   try {

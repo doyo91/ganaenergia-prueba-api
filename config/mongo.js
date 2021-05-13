@@ -2,11 +2,12 @@ const mongoose = require('mongoose')
 const logger = require('../utils/logger')
 
 // eslint-disable-next-line no-unused-vars
-const { MONGO_DB_URI, NODE_ENV } = process.env
+const { MONGO_DB_URI, MONGO_DB_URI_TEST, NODE_ENV } = process.env
+const connectionString = NODE_ENV === 'test' ? MONGO_DB_URI_TEST : MONGO_DB_URI
 
 // Connection to mongodb
 mongoose
-  .connect(MONGO_DB_URI, {
+  .connect(connectionString, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,

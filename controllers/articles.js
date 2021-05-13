@@ -36,13 +36,12 @@ articlesRouter.get('/:id', async (req, res, next) => {
 articlesRouter.post('/', [tokenExtractor], async (req, res, next) => {
   const body = req.body
   if (!body) return res.status(400).json({ error: 'required data' })
-  const { title, description, price, stock, imageURL } = body
+  const { title, description, price, stock } = body
   const newArticle = new Article({
     title,
-    description,
+    description: description || '',
     price,
-    stock,
-    imageURL
+    stock
   })
 
   try {
@@ -58,14 +57,13 @@ articlesRouter.post('/', [tokenExtractor], async (req, res, next) => {
 // @access    Private
 articlesRouter.put('/:id', [tokenExtractor], async (req, res, next) => {
   const { id } = req.params
-  const { title, description, price, stock, imageURL } = req.body
+  const { title, description, price, stock } = req.body
 
   const newArticleInfo = {
     title,
     description,
     price,
-    stock,
-    imageURL
+    stock
   }
 
   try {
